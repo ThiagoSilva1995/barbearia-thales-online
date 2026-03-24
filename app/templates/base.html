@@ -6,13 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Gestão de Barbearia{% endblock %}</title>
 
+    <!-- Configurações PWA (Admin) -->
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Links corrigidos (sem espaços) -->
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2663/2663571.png">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Ícones (FontAwesome) -->
+    <!-- Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Fonte Google (Inter) -->
+    <!-- Fonte -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -23,6 +29,23 @@
         input[type="date"],
         input[type="time"] {
             font-family: 'Inter', sans-serif;
+        }
+
+        /* Estilos para Animação do Menu Mobile */
+        .mobile-menu-overlay.visible {
+            pointer-events: auto;
+        }
+
+        .mobile-menu-overlay.show {
+            opacity: 1;
+        }
+
+        .mobile-menu-content.slide-in {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-content.slide-out {
+            transform: translateX(100%);
         }
     </style>
 </head>
@@ -44,7 +67,7 @@
                 </div>
             </a>
 
-            <!-- Menu Dinâmico -->
+            <!-- Menu Desktop (Visível apenas em telas grandes) -->
             <div class="hidden md:flex space-x-1 bg-gray-800 p-1 rounded-lg items-center">
 
                 {% if request.session.get('is_logged') %}
@@ -98,7 +121,7 @@
                     <i class="fas fa-sign-out-alt mr-1"></i> Sair
                 </a>
 
-                <!-- Indicador de Perfil (Opcional) -->
+                <!-- Indicador de Perfil -->
                 {% if user_role %}
                 <span
                     class="ml-2 px-2 py-1 rounded text-xs font-bold uppercase 
@@ -116,8 +139,10 @@
                 {% endif %}
             </div>
 
-            <!-- Menu Mobile (Simplificado) -->
-            <button class="md:hidden text-gray-300 text-2xl"><i class="fas fa-bars"></i></button>
+            <!-- Botão Menu Mobile (Corrigido com a classe mobile-menu-btn) -->
+            <button class="mobile-menu-btn md:hidden text-gray-300 text-2xl focus:outline-none">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </nav>
 
@@ -147,6 +172,143 @@
             <p class="text-xs mt-2 text-gray-600">Powered by FastAPI & Python</p>
         </div>
     </footer>
+
+    <!-- ========================================== -->
+    <!-- ESTRUTURA DO MENU MOBILE (GAVETA) -->
+    <!-- ========================================== -->
+    <div
+        class="mobile-menu-overlay fixed inset-0 bg-black/50 z-[9999] opacity-0 transition-opacity duration-300 pointer-events-none">
+        <div
+            class="mobile-menu-content fixed top-0 right-0 h-full w-[85%] max-w-sm bg-gray-900 shadow-2xl transform translate-x-full transition-transform duration-300 ease-out overflow-y-auto">
+
+            <!-- Cabeçalho do Menu -->
+            <div class="bg-gradient-to-r from-blue-700 to-blue-900 p-6 pb-8 relative">
+                <button class="mobile-menu-close absolute top-4 right-4 text-white/70 hover:text-white transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-user-tie text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-bold text-lg">{{ request.session.get('user_name', 'Usuário') }}</h3>
+                        <p class="text-blue-200 text-xs uppercase tracking-wider font-semibold">
+                            {{ request.session.get('user_role', 'recepcao')|upper }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Itens do Menu -->
+            <div class="py-4 px-3 space-y-1">
+
+                <!-- Seção: Principal -->
+                <div class="mb-6">
+                    <p class="px-3 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Principal</p>
+                    <a href="/agendamentos"
+                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
+                        <i class="fas fa-calendar-alt w-5 text-center text-blue-400 group-hover:text-blue-300"></i>
+                        <span class="font-medium">Agenda</span>
+                    </a>
+                    <a href="/marcar-horario"
+                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
+                        <i class="fas fa-plus-circle w-5 text-center text-green-400 group-hover:text-green-300"></i>
+                        <span class="font-medium">Novo Agendamento</span>
+                    </a>
+                    <a href="/cadastrar-cliente"
+                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
+                        <i class="fas fa-users w-5 text-center text-purple-400 group-hover:text-purple-300"></i>
+                        <span class="font-medium">Clientes</span>
+                    </a>
+                </div>
+
+                <!-- Seção: Gestão (Só para Admin) -->
+                {% if request.session.get('user_role') == 'admin' %}
+                <div class="mb-6">
+                    <p class="px-3 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Gestão</p>
+                    <a href="/estatisticas"
+                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
+                        <i class="fas fa-chart-line w-5 text-center text-yellow-400 group-hover:text-yellow-300"></i>
+                        <span class="font-medium">Relatórios</span>
+                    </a>
+                    <a href="/servicos"
+                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
+                        <i class="fas fa-cut w-5 text-center text-pink-400 group-hover:text-pink-300"></i>
+                        <span class="font-medium">Serviços</span>
+                    </a>
+                    <a href="/produtos"
+                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
+                        <i class="fas fa-box w-5 text-center text-orange-400 group-hover:text-orange-300"></i>
+                        <span class="font-medium">Produtos</span>
+                    </a>
+                    <a href="/cadastrar-barbeiro"
+                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
+                        <i class="fas fa-user-tie w-5 text-center text-cyan-400 group-hover:text-cyan-300"></i>
+                        <span class="font-medium">Barbeiros</span>
+                    </a>
+                    <a href="/admin/configuracoes"
+                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
+                        <i class="fas fa-cog w-5 text-center text-gray-400 group-hover:text-gray-300"></i>
+                        <span class="font-medium">Configurações</span>
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Seção: Conta -->
+                <div class="border-t border-gray-800 pt-4 mt-4">
+                    <a href="/logout"
+                        class="flex items-center gap-3 px-3 py-3.5 text-red-400 hover:bg-red-900/20 hover:text-red-300 rounded-lg transition group">
+                        <i class="fas fa-sign-out-alt w-5 text-center"></i>
+                        <span class="font-medium">Sair do Sistema</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Rodapé -->
+            <div class="p-4 text-center text-xs text-gray-600 border-t border-gray-800">
+                <p>Sistema Profissional v1.0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script para o Menu Mobile -->
+    <script>
+        const menuBtn = document.querySelector('.mobile-menu-btn');
+        const menuOverlay = document.querySelector('.mobile-menu-overlay');
+        const menuContent = document.querySelector('.mobile-menu-content');
+        const closeBtn = document.querySelector('.mobile-menu-close');
+
+        function toggleMenu() {
+            const isOpen = menuOverlay.classList.contains('show');
+
+            if (isOpen) {
+                // Fechar menu
+                menuOverlay.classList.remove('show');
+                menuContent.classList.remove('slide-in');
+                menuContent.classList.add('slide-out');
+                setTimeout(() => {
+                    menuOverlay.classList.remove('visible');
+                    menuContent.classList.remove('slide-out');
+                    document.body.style.overflow = 'auto'; // Volta scroll da página
+                }, 300);
+            } else {
+                // Abrir menu
+                menuOverlay.classList.add('visible');
+                setTimeout(() => {
+                    menuOverlay.classList.add('show');
+                    menuContent.classList.add('slide-in');
+                    document.body.style.overflow = 'hidden'; // Trava scroll da página
+                }, 10);
+            }
+        }
+
+        if (menuBtn) menuBtn.addEventListener('click', toggleMenu);
+        if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
+        if (menuOverlay) menuOverlay.addEventListener('click', (e) => {
+            if (e.target === menuOverlay) toggleMenu();
+        });
+    </script>
 
 </body>
 

@@ -1,7 +1,7 @@
 {
     "name": "Barbearia do Thales",
     "short_name": "Barbearia Thales",
-    "description": "Agende seu horário de forma rápida e fácil.",
+    "description": "Agende seu horário ou gerencie sua barbearia.",
     "start_url": "/cliente",
     "display": "standalone",
     "background_color": "#f8fafc",
