@@ -1,0 +1,22 @@
+{
+    "name": "Barbearia do Thales",
+    "short_name": "Barbearia Thales",
+    "description": "Agende seu horário de forma rápida e fácil.",
+    "start_url": "/cliente",
+    "display": "standalone",
+    "background_color": "#f8fafc",
+    "theme_color": "#2563eb",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "https://cdn-icons-png.flaticon.com/512/2663/2663571.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://cdn-icons-png.flaticon.com/512/2663/2663571.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

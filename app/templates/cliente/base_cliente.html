@@ -3,15 +3,41 @@
 
 <head>
     <meta charset="UTF-8">
+    <!-- Viewport essencial para mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}Barbearia do Thales{% endblock %}</title>
+
+    <!-- Configurações de App Nativo (iOS e Android) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="application-name" content="Barbearia Thales">
+
+    <!-- Link para o Manifesto -->
+    <link rel="manifest" href="/static/manifest.json">
+
+    <!-- Ícones para iOS (Apple Touch Icon) -->
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2663/2663571.png">
+
+    <!-- Tailwind e Font Awesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Estilos Customizados -->
     <style>
         body {
             background-color: #f8fafc;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Impede seleção de texto como em apps nativos */
+        body,
+        button,
+        input,
+        select {
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .glass-header {
@@ -23,7 +49,7 @@
         .card-modern {
             background: white;
             border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             border: none;
         }
 
@@ -55,7 +81,6 @@
             background: white;
             border-color: #2563eb;
             outline: none;
-            ring: 2px;
         }
 
         .no-scrollbar::-webkit-scrollbar {

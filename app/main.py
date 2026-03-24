@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 from app.database import engine, Base
+from fastapi.staticfiles import StaticFiles
 
 # Importe os routers
 from app.routers import (
