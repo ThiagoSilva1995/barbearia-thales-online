@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestão de Barbearia{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Ícones (FontAwesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Fonte Google (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        input[type="date"],
+        input[type="time"] {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <!-- Navbar Principal -->
+    <nav class="bg-gray-900 text-white shadow-lg sticky top-0 z-50 border-b border-gray-800">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+
+            <!-- Logo -->
+            <a href="/home" class="flex items-center gap-3 group">
+                <div class="bg-blue-600 p-2 rounded-lg">
+                    <i class="fas fa-cut text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold">Gestão de Barbearia</h1>
+                    <p class="text-xs text-gray-400">Sistema Profissional</p>
+                </div>
+            </a>
+
+            <!-- Menu Dinâmico -->
+            <div class="hidden md:flex space-x-1 bg-gray-800 p-1 rounded-lg items-center">
+
+                {% if request.session.get('is_logged') %}
+
+                <!-- Itens PÚBLICOS (Sempre visíveis se logado) -->
+                <a href="/agendamentos"
+                    class="px-4 py-2 rounded-md hover:bg-gray-700 text-gray-300 hover:text-white transition text-sm font-medium">
+                    <i class="fas fa-calendar-alt mr-1"></i> Agenda
+                </a>
+                <a href="/marcar-horario"
+                    class="px-4 py-2 rounded-md hover:bg-gray-700 text-gray-300 hover:text-white transition text-sm font-medium">
+                    <i class="fas fa-plus-circle mr-1"></i> Novo Agendamento
+                </a>
+                <a href="/cadastrar-cliente"
+                    class="px-4 py-2 rounded-md hover:bg-gray-700 text-gray-300 hover:text-white transition text-sm font-medium">
+                    <i class="fas fa-users mr-1"></i> Clientes
+                </a>
+
+                <!-- Separador -->
+                <div class="w-px h-6 bg-gray-600 mx-2"></div>
+
+                {% set user_role = request.session.get('user_role') %}
+
+                <!-- Itens APENAS PARA ADMINISTRAÇÃO -->
+                {% if user_role == 'admin' %}
+                <a href="/estatisticas"
+                    class="px-4 py-2 rounded-md hover:bg-blue-600 text-white transition text-sm font-medium bg-blue-700">
+                    <i class="fas fa-chart-line mr-1"></i> Relatórios
+                </a>
+                <a href="/servicos"
+                    class="px-4 py-2 rounded-md hover:bg-blue-600 text-white transition text-sm font-medium bg-blue-700">
+                    <i class="fas fa-cut mr-1"></i> Serviços
+                </a>
+                <a href="/produtos"
+                    class="px-4 py-2 rounded-md hover:bg-blue-600 text-white transition text-sm font-medium bg-blue-700">
+                    <i class="fas fa-box mr-1"></i> Produtos
+                </a>
+                <a href="/cadastrar-barbeiro"
+                    class="px-4 py-2 rounded-md hover:bg-blue-600 text-white transition text-sm font-medium bg-blue-700">
+                    <i class="fas fa-user-tie mr-1"></i> Barbeiros
+                </a>
+                <a href="/admin/configuracoes"
+                    class="px-4 py-2 rounded-md hover:bg-blue-600 text-white transition text-sm font-medium bg-blue-700">
+                    <i class="fas fa-cog mr-1"></i> Configurações
+                </a>
+                {% endif %}
+
+                <!-- Botão Logout -->
+                <a href="/logout"
+                    class="ml-4 px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white transition text-sm font-medium">
+                    <i class="fas fa-sign-out-alt mr-1"></i> Sair
+                </a>
+
+                <!-- Indicador de Perfil (Opcional) -->
+                {% if user_role %}
+                <span
+                    class="ml-2 px-2 py-1 rounded text-xs font-bold uppercase 
+                        {% if user_role == 'admin' %}bg-purple-600 text-white{% else %}bg-green-600 text-white{% endif %}">
+                    {{ user_role }}
+                </span>
+                {% endif %}
+
+                {% else %}
+                <!-- Botão Login (Só aparece se NÃO logado) -->
+                <a href="/login"
+                    class="ml-4 px-4 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white transition text-sm font-medium">
+                    <i class="fas fa-lock mr-1"></i> Acessar Sistema
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Menu Mobile (Simplificado) -->
+            <button class="md:hidden text-gray-300 text-2xl"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="container mx-auto px-4 py-8 min-h-screen">
+        {% if request.query_params.get('erro') %}
+        <div
+            class="mb-6 p-4 rounded-lg shadow-sm border-l-4 bg-red-50 border-red-500 text-red-800 flex items-center justify-between">
+            <span class="font-medium"><i class="fas fa-exclamation-circle mr-2"></i> {{ request.query_params.get('erro')
+                }}</span>
+            <button onclick="this.parentElement.remove()" class="text-red-600 hover:text-red-800"><i
+                    class="fas fa-times"></i></button>
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8 mt-12 border-t border-gray-800">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex justify-center items-center gap-2 mb-4">
+                <i class="fas fa-cut text-gray-600"></i>
+                <span class="font-semibold text-gray-300">Gestão de Barbearia</span>
+            </div>
+            <p class="text-sm">&copy; 2026 Todos os direitos reservados.</p>
+            <p class="text-xs mt-2 text-gray-600">Powered by FastAPI & Python</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

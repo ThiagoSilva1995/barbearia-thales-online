@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Produtos - Gestão de Barbearia{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">🧴 Produtos</h1>
+
+    <!-- Formulário de Cadastro -->
+    <div class="bg-white p-6 rounded shadow mb-8">
+        <h2 class="text-xl font-bold mb-4">Novo Produto</h2>
+        <form action="/produtos" method="POST" class="flex gap-4 items-end">
+            <div class="flex-1">
+                <label class="block text-sm font-medium">Nome</label>
+                <input type="text" name="nome" required class="w-full border p-2 rounded">
+            </div>
+            <div class="w-32">
+                <label class="block text-sm font-medium">Preço (R$)</label>
+                <input type="number" step="0.01" name="preco" required class="w-full border p-2 rounded">
+            </div>
+            <div class="w-24">
+                <label class="block text-sm font-medium">Estoque</label>
+                <input type="number" name="estoque" required class="w-full border p-2 rounded">
+            </div>
+            <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Salvar</button>
+        </form>
+    </div>
+
+    <!-- Lista -->
+    <div class="bg-white rounded shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nome</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Preço</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estoque</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for p in produtos %}
+                <tr>
+                    <td class="px-6 py-4">{{ p.nome }}</td>
+                    <td class="px-6 py-4">R$ {{ p.preco }}</td>
+                    <td class="px-6 py-4">{{ p.estoque }} un.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-6">
+        <a href="/agendamentos" class="text-blue-600 hover:underline">← Voltar para Agenda</a>
+    </div>
+</div>
+{% endblock %}

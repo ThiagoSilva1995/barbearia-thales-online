@@ -1,0 +1,70 @@
+{% extends "cliente/base_cliente.html" %}
+{% block title %}Cadastro{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in">
+
+    <div class="w-full card-modern p-8 max-w-md text-center space-y-6">
+        <div>
+            <h2 class="text-2xl font-extrabold text-slate-900">Complete seu Cadastro</h2>
+            <p class="text-slate-500 text-sm mt-1">É rapidinho, só para gente te conhecer!</p>
+        </div>
+
+        {% if request.query_params.get('erro') %}
+        <div
+            class="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm font-medium border border-red-100 flex items-center gap-2 text-left">
+            <i class="fas fa-exclamation-circle"></i> {{ request.query_params.get('erro') }}
+        </div>
+        {% endif %}
+
+        <form action="/cliente/cadastrar" method="POST" class="space-y-4 text-left">
+
+            <!-- WhatsApp (Somente Leitura) -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Seu WhatsApp</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fab fa-whatsapp text-green-500"></i>
+                    </div>
+                    <input type="tel" name="telefone" value="{{ telefone }}" readonly
+                        class="input-modern w-full pl-10 pr-4 bg-slate-100 text-slate-500 cursor-not-allowed font-mono">
+                </div>
+            </div>
+
+            <!-- Nome Completo -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-700 ml-1">Nome Completo</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="far fa-user text-slate-400"></i>
+                    </div>
+                    <input type="text" name="nome" placeholder="Ex: João da Silva" required autocomplete="name"
+                        class="input-modern w-full pl-10 pr-4 focus:ring-2 focus:ring-blue-500/20">
+                </div>
+            </div>
+
+            <!-- Data de Nascimento -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-700 ml-1">Data de Nascimento</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="far fa-calendar-alt text-slate-400"></i>
+                    </div>
+                    <input type="date" name="data_nascimento" required autocomplete="bday"
+                        class="input-modern w-full pl-10 pr-4 focus:ring-2 focus:ring-blue-500/20 [color-scheme:light]">
+                </div>
+            </div>
+
+            <!-- Botão de Ação -->
+            <button type="submit"
+                class="btn-primary text-lg mt-6 flex items-center justify-center gap-2 shadow-lg shadow-green-500/20 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700">
+                Finalizar e Agendar <i class="fas fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <p class="text-[10px] text-slate-400 text-center leading-relaxed pt-4 border-t border-slate-100">
+            Seus dados estão seguros e serão usados apenas para confirmar seus agendamentos e enviar parabéns! 🔒
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends "cliente/base_cliente.html" %}
+{% block title %}Agendar Horário{% endblock %}
+
+{% block content %}
+
+<!-- Link para Meus Agendamentos (Novo) -->
+<div class="flex justify-end mb-4 mt-2">
+    <a href="/cliente/meus-agendamentos"
+        class="text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+        <i class="far fa-calendar-check"></i> Meus Agendamentos
+    </a>
+</div>
+
+<!-- Mensagens Flutuantes -->
+{% if msg %}
+<div
+    class="fixed top-20 left-4 right-4 z-50 bg-green-500 text-white px-4 py-3 rounded-xl shadow-lg text-sm font-bold flex items-center gap-2 animate-bounce">
+    <i class="fas fa-check-circle"></i> {{ msg }}
+</div>
+{% endif %}
+
+{% if erro %}
+<div
+    class="mb-6 bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm font-medium border border-red-100 flex items-center gap-2">
+    <i class="fas fa-exclamation-triangle"></i> {{ erro }}
+</div>
+{% endif %}
+
+<!-- Boas-vindas -->
+<div class="mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/30">
+    <p class="text-blue-100 text-sm font-medium mb-1">Olá,</p>
+    <h2 class="text-2xl font-bold">{{ cliente.nome.split()[0] }}! 👋</h2>
+    <p class="text-blue-50 text-sm mt-2 opacity-90">Vamos deixar o visual em dia?</p>
+</div>
+
+<form action="/cliente/agendar/confirmar" method="POST" class="space-y-5">
+
+    <!-- 1. Data -->
+    <div class="card-modern p-5">
+        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">Quando?</label>
+        <input type="date" id="data_input" name="data" value="{{ data_selecionada.strftime('%Y-%m-%d') }}"
+            min="{{ hoje.strftime('%Y-%m-%d') }}" onchange="tentarFiltrar()"
+            class="input-modern w-full text-center font-semibold text-slate-700 cursor-pointer">
+    </div>
+
+    <!-- 2. Barbeiro -->
+    <div class="card-modern p-5">
+        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">Quem vai te atender?</label>
+        <div class="relative">
+            <select id="barbeiro_input" name="barbeiro" required onchange="tentarFiltrar()"
+                class="input-modern w-full appearance-none font-medium text-slate-700 cursor-pointer pr-8">
+                <option value="" disabled {% if not barbeiro_selecionado %}selected{% endif %}>Toque para escolher...
+                </option>
+                {% for barb in barbeiros %}
+                <option value="{{ barb.id }}" {% if barbeiro_selecionado==barb.id %}selected{% endif %}>
+                    {{ barb.nome }}
+                </option>
+                {% endfor %}
+            </select>
+            <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
+                <i class="fas fa-chevron-down text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Horários (Grid Interativo) -->
+    <div class="card-modern p-5 {% if not barbeiro_selecionado %}opacity-60 grayscale{% endif %}">
+        <div class="flex justify-between items-end mb-3">
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Horários Livres</label>
+            {% if barbeiro_selecionado and horarios_livres %}
+            <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md">{{ horarios_livres|length }}
+                opções</span>
+            {% endif %}
+        </div>
+
+        {% if not barbeiro_selecionado %}
+        <div class="text-center py-8 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
+            <p class="text-slate-400 text-sm">Selecione o profissional acima 👆</p>
+        </div>
+        <input type="hidden" name="hora" value="">
+
+        {% elif not horarios_livres %}
+        <div class="text-center py-8 bg-red-50 rounded-xl border border-red-100">
+            <p class="text-red-500 font-bold text-sm">😕 Nenhum horário disponível neste dia.</p>
+            <p class="text-red-400 text-xs mt-1">Tente outro dia ou profissional.</p>
+        </div>
+        <input type="hidden" name="hora" value="">
+
+        {% else %}
+        <div class="grid grid-cols-3 gap-2">
+            {% for hora in horarios_livres %}
+            <label class="cursor-pointer">
+                <input type="radio" name="hora" value="{{ hora }}" class="peer sr-only" required>
+                <div
+                    class="text-center py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-bold text-sm peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 peer-checked:shadow-md peer-checked:shadow-blue-500/30 transition-all duration-200 hover:bg-blue-50 hover:border-blue-200">
+                    {{ hora }}
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 4. Serviços -->
+    <div class="card-modern p-5 pb-2">
+        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">O que vamos fazer?</label>
+        <div class="space-y-2 max-h-60 overflow-y-auto no-scrollbar pr-1">
+            {% for serv in servicos %}
+            <label
+                class="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50 hover:bg-white hover:border-blue-200 hover:shadow-sm transition cursor-pointer group">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-5 h-5 rounded border-2 border-slate-300 flex items-center justify-center group-has-[:checked]:bg-blue-600 group-has-[:checked]:border-blue-600 transition">
+                        <input type="checkbox" name="servico" value="{{ serv.id }}" class="hidden peer">
+                        <i class="fas fa-check text-white text-xs opacity-0 peer-checked:opacity-100 transition"></i>
+                    </div>
+                    <span class="font-medium text-slate-700 group-hover:text-slate-900">{{ serv.nome }}</span>
+                </div>
+                <span class="font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg text-xs">R$ {{
+                    "%.2f"|format(serv.preco) }}</span>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Botão Final -->
+    <button type="submit"
+        class="btn-primary text-lg mt-8 flex items-center justify-center gap-2 shadow-xl shadow-green-500/20 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700">
+        <i class="fas fa-calendar-check"></i> Confirmar Agendamento
+    </button>
+
+    <div class="h-4"></div>
+</form>
+
+<script>
+    function tentarFiltrar() {
+        const data = document.getElementById('data_input').value;
+        const barbeiro = document.getElementById('barbeiro_input').value;
+        if (data && barbeiro) {
+            // Pequeno delay para sensação de processamento
+            setTimeout(() => {
+                window.location.href = `/cliente/agendar?data=${data}&barbeiro=${barbeiro}`;
+            }, 150);
+        }
+    }
+
+    // Validação antes de enviar
+    document.querySelector('form').addEventListener('submit', function (e) {
+        const horaSelecionada = document.querySelector('input[name="hora"]:checked');
+        const servicosSelecionados = document.querySelectorAll('input[name="servico"]:checked');
+
+        if (!horaSelecionada) {
+            e.preventDefault();
+            alert("⚠️ Por favor, escolha um horário disponível na grade acima!");
+            return;
+        }
+
+        if (servicosSelecionados.length === 0) {
+            e.preventDefault();
+            alert("⚠️ Selecione pelo menos um serviço.");
+            return;
+        }
+
+        // Feedback visual de envio
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+        btn.disabled = true;
+    });
+</script>
+{% endblock %}

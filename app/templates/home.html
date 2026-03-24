@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Início - Gestão de Barbearia{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[85vh] text-center px-4">
+
+    <!-- Cabeçalho de Boas-vindas -->
+    <div class="mb-10 max-w-2xl">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+            Bem-vindo à <span class="text-blue-600">Barbearia</span>
+        </h1>
+        <p class="text-lg text-gray-600">
+            Selecione uma opção abaixo para começar o atendimento de hoje.
+        </p>
+    </div>
+
+    <!-- Cards Principais (Apenas os 3 solicitados) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl mb-12">
+
+        <!-- Card 1: Agenda -->
+        <a href="/agendamentos"
+            class="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-t-4 border-blue-500 flex flex-col items-center">
+            <div class="bg-blue-100 p-4 rounded-full mb-4 group-hover:bg-blue-600 transition-colors duration-300">
+                <i
+                    class="fas fa-calendar-alt text-4xl text-blue-600 group-hover:text-white transition-colors duration-300"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Agenda</h2>
+            <p class="text-gray-500 text-sm">Visualizar e gerenciar os horários do dia.</p>
+        </a>
+
+        <!-- Card 2: Novo Agendamento -->
+        <a href="/marcar-horario"
+            class="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-t-4 border-green-500 flex flex-col items-center">
+            <div class="bg-green-100 p-4 rounded-full mb-4 group-hover:bg-green-600 transition-colors duration-300">
+                <i
+                    class="fas fa-plus-circle text-4xl text-green-600 group-hover:text-white transition-colors duration-300"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Novo Agendamento</h2>
+            <p class="text-gray-500 text-sm">Realizar um novo agendamento rapidamente.</p>
+        </a>
+
+        <!-- Card 3: Clientes -->
+        <a href="/cadastrar-cliente"
+            class="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-t-4 border-purple-500 flex flex-col items-center">
+            <div class="bg-purple-100 p-4 rounded-full mb-4 group-hover:bg-purple-600 transition-colors duration-300">
+                <i
+                    class="fas fa-users text-4xl text-purple-600 group-hover:text-white transition-colors duration-300"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Clientes</h2>
+            <p class="text-gray-500 text-sm">Cadastrar novos clientes manualmente.</p>
+        </a>
+    </div>
+
+    <!-- Área Administrativa (Rodapé da Home) -->
+    <div class="mt-8 pt-8 border-t border-gray-200 w-full max-w-4xl">
+        {% if request.session.get('is_admin') %}
+        <div class="flex flex-col items-center">
+            <p class="text-green-700 font-semibold mb-4 bg-green-50 px-4 py-2 rounded-full border border-green-200">
+                <i class="fas fa-user-shield mr-2"></i>Você está logado como Administrador
+            </p>
+            <div class="flex gap-4">
+                <a href="/servicos" class="text-sm text-gray-600 hover:text-blue-600 font-medium underline">Gerenciar
+                    Serviços</a>
+                <span class="text-gray-300">|</span>
+                <a href="/produtos" class="text-sm text-gray-600 hover:text-blue-600 font-medium underline">Gerenciar
+                    Produtos</a>
+                <span class="text-gray-300">|</span>
+                <a href="/estatisticas"
+                    class="text-sm text-gray-600 hover:text-blue-600 font-medium underline">Relatórios</a>
+                <span class="text-gray-300">|</span>
+                <a href="/logout" class="text-sm text-red-600 hover:text-red-800 font-bold underline">Sair</a>
+            </div>
+        </div>
+        {% else %}
+        <a href="/login" class="inline-flex items-center text-sm text-gray-500 hover:text-gray-800 transition">
+            <i class="fas fa-lock mr-2"></i>
+            <span class="font-medium">Área Restrita (Administrador)</span>
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
