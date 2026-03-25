@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviando aviso...</title>
+    <script>
+        function abrirZap() {
+            // Abre o WhatsApp em nova aba
+            window.open("{{ zap_link }}", "_blank");
+
+            // Após 2 segundos, redireciona para a tela de sucesso
+            setTimeout(function () {
+                window.location.href = "{{ destino_final }}";
+            }, 2000);
+        }
+    </script>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f3f4f6;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            width: 350px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #25D366;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        h2 {
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .manual-link {
+            display: block;
+            margin-top: 1rem;
+            color: #25D366;
+            text-decoration: underline;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body onload="abrirZap()">
+    <div class="card">
+        <div class="spinner"></div>
+        <h2>Quase lá! 🚀</h2>
+        <p>Estamos abrindo o WhatsApp para enviar o aviso à barbearia...</p>
+        <p>Se nada acontecer em instantes,</p>
+        <a href="{{ zap_link }}" target="_blank" class="manual-link">clique aqui para enviar manualmente</a>.
+    </div>
+</body>
+
+</html>

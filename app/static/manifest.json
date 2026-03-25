@@ -1,11 +1,11 @@
 {
-    "name": "Barbearia do Thales",
-    "short_name": "Barbearia Thales",
-    "description": "Agende seu horário ou gerencie sua barbearia.",
-    "start_url": "/cliente",
+    "name": "Gestão Barbearia",
+    "short_name": "Barbearia",
+    "description": "Sistema profissional de gestão para barbearias.",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#f8fafc",
-    "theme_color": "#2563eb",
+    "theme_color": "#1e3a8a",
     "orientation": "portrait",
     "icons": [
         {
