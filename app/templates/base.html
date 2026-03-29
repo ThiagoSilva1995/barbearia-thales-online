@@ -3,313 +3,244 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}Gestão de Barbearia{% endblock %}</title>
 
-    <!-- Configurações PWA (Admin) -->
-    <meta name="theme-color" content="#1e3a8a">
+    <!-- PWA -->
+    <meta name="theme-color" content="#2563eb">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <!-- Links corrigidos (sem espaços) -->
     <link rel="manifest" href="/static/manifest.json">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2663/2663571.png">
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Fonte -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        input[type="date"],
-        input[type="time"] {
-            font-family: 'Inter', sans-serif;
+        /* Glassmorphism Navbar */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
         }
 
-        /* Estilos para Animação do Menu Mobile */
-        .mobile-menu-overlay.visible {
-            pointer-events: auto;
+        /* Mobile Bottom Nav */
+        .mobile-bottom-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(229, 231, 235, 0.5);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
         }
 
-        .mobile-menu-overlay.show {
-            opacity: 1;
+        /* Active State for Nav */
+        .nav-item.active {
+            color: #2563eb;
         }
 
-        .mobile-menu-content.slide-in {
-            transform: translateX(0);
+        .nav-item.active i {
+            transform: translateY(-2px);
         }
 
-        .mobile-menu-content.slide-out {
-            transform: translateX(100%);
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
 
-<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+<body class="bg-slate-50 text-slate-800 antialiased {% if request.session.get('is_logged') %}pb-20 md:pb-0{% endif %}">
 
-    <!-- Navbar Principal -->
-    <nav class="bg-gray-900 text-white shadow-lg sticky top-0 z-50 border-b border-gray-800">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-
+    <!-- ========================================== -->
+    <!-- NAVBAR DESKTOP (Só aparece se LOGADO) -->
+    <!-- ========================================== -->
+    {% if request.session.get('is_logged') %}
+    <nav class="glass-nav sticky top-0 z-40 hidden md:block">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
             <!-- Logo -->
             <a href="/home" class="flex items-center gap-3 group">
-                <div class="bg-blue-600 p-2 rounded-lg">
-                    <i class="fas fa-cut text-white text-xl"></i>
+                <div
+                    class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 group-hover:scale-105 transition">
+                    <i class="fas fa-cut text-white text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold">Gestão de Barbearia</h1>
-                    <p class="text-xs text-gray-400">Sistema Profissional</p>
+                    <h1 class="text-lg font-bold text-slate-900 leading-tight">Barbearia</h1>
+                    <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Gestão Pro</p>
                 </div>
             </a>
 
-            <!-- Menu Desktop (Visível apenas em telas grandes) -->
-            <div class="hidden md:flex space-x-1 bg-gray-800 p-1 rounded-lg items-center">
-
-                {% if request.session.get('is_logged') %}
-
-                <!-- Itens PÚBLICOS (Sempre visíveis se logado) -->
+            <!-- Menu Desktop -->
+            <div class="flex items-center gap-1 bg-slate-100/50 p-1 rounded-full border border-slate-200/50">
                 <a href="/agendamentos"
-                    class="px-4 py-2 rounded-md hover:bg-gray-700 text-gray-300 hover:text-white transition text-sm font-medium">
-                    <i class="fas fa-calendar-alt mr-1"></i> Agenda
-                </a>
+                    class="px-4 py-2 rounded-full text-sm font-medium hover:bg-white hover:text-blue-600 hover:shadow-sm transition text-slate-600">Agenda</a>
                 <a href="/marcar-horario"
-                    class="px-4 py-2 rounded-md hover:bg-gray-700 text-gray-300 hover:text-white transition text-sm font-medium">
-                    <i class="fas fa-plus-circle mr-1"></i> Novo Agendamento
-                </a>
+                    class="px-4 py-2 rounded-full text-sm font-medium hover:bg-white hover:text-blue-600 hover:shadow-sm transition text-slate-600">Novo</a>
                 <a href="/cadastrar-cliente"
-                    class="px-4 py-2 rounded-md hover:bg-gray-700 text-gray-300 hover:text-white transition text-sm font-medium">
-                    <i class="fas fa-users mr-1"></i> Clientes
-                </a>
+                    class="px-4 py-2 rounded-full text-sm font-medium hover:bg-white hover:text-blue-600 hover:shadow-sm transition text-slate-600">Clientes</a>
 
-                <!-- Separador -->
-                <div class="w-px h-6 bg-gray-600 mx-2"></div>
-
-                {% set user_role = request.session.get('user_role') %}
-
-                <!-- Itens APENAS PARA ADMINISTRAÇÃO -->
-                {% if user_role == 'admin' %}
-                <a href="/estatisticas"
-                    class="px-4 py-2 rounded-md hover:bg-blue-600 text-white transition text-sm font-medium bg-blue-700">
-                    <i class="fas fa-chart-line mr-1"></i> Relatórios
-                </a>
-                <a href="/servicos"
-                    class="px-4 py-2 rounded-md hover:bg-blue-600 text-white transition text-sm font-medium bg-blue-700">
-                    <i class="fas fa-cut mr-1"></i> Serviços
-                </a>
-                <a href="/produtos"
-                    class="px-4 py-2 rounded-md hover:bg-blue-600 text-white transition text-sm font-medium bg-blue-700">
-                    <i class="fas fa-box mr-1"></i> Produtos
-                </a>
-                <a href="/cadastrar-barbeiro"
-                    class="px-4 py-2 rounded-md hover:bg-blue-600 text-white transition text-sm font-medium bg-blue-700">
-                    <i class="fas fa-user-tie mr-1"></i> Barbeiros
-                </a>
-                <a href="/admin/configuracoes"
-                    class="px-4 py-2 rounded-md hover:bg-blue-600 text-white transition text-sm font-medium bg-blue-700">
-                    <i class="fas fa-cog mr-1"></i> Configurações
-                </a>
-                {% endif %}
-
-                <!-- Botão Logout -->
-                <a href="/logout"
-                    class="ml-4 px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white transition text-sm font-medium">
-                    <i class="fas fa-sign-out-alt mr-1"></i> Sair
-                </a>
-
-                <!-- Indicador de Perfil -->
-                {% if user_role %}
-                <span
-                    class="ml-2 px-2 py-1 rounded text-xs font-bold uppercase 
-                        {% if user_role == 'admin' %}bg-purple-600 text-white{% else %}bg-green-600 text-white{% endif %}">
-                    {{ user_role }}
-                </span>
-                {% endif %}
-
-                {% else %}
-                <!-- Botão Login (Só aparece se NÃO logado) -->
-                <a href="/login"
-                    class="ml-4 px-4 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white transition text-sm font-medium">
-                    <i class="fas fa-lock mr-1"></i> Acessar Sistema
-                </a>
+                {% if request.session.get('user_role') == 'admin' %}
+                <div class="w-px h-4 bg-slate-300 mx-1"></div>
+                <!-- Dropdown Simples ou Links Diretos para Admin -->
+                <div class="flex items-center gap-1 pl-1">
+                    <a href="/estatisticas"
+                        class="px-3 py-2 rounded-full text-sm font-medium hover:bg-white hover:text-blue-600 hover:shadow-sm transition text-slate-600"
+                        title="Relatórios">
+                        <i class="fas fa-chart-line"></i>
+                    </a>
+                    <a href="/servicos"
+                        class="px-3 py-2 rounded-full text-sm font-medium hover:bg-white hover:text-blue-600 hover:shadow-sm transition text-slate-600"
+                        title="Serviços">
+                        <i class="fas fa-cut"></i>
+                    </a>
+                    <a href="/produtos"
+                        class="px-3 py-2 rounded-full text-sm font-medium hover:bg-white hover:text-blue-600 hover:shadow-sm transition text-slate-600"
+                        title="Produtos">
+                        <i class="fas fa-box"></i>
+                    </a>
+                    <a href="/cadastrar-barbeiro"
+                        class="px-3 py-2 rounded-full text-sm font-medium hover:bg-white hover:text-blue-600 hover:shadow-sm transition text-slate-600"
+                        title="Barbeiros">
+                        <i class="fas fa-user-tie"></i>
+                    </a>
+                    <a href="/admin/configuracoes"
+                        class="px-3 py-2 rounded-full text-sm font-medium hover:bg-white hover:text-blue-600 hover:shadow-sm transition text-slate-600"
+                        title="Configurações">
+                        <i class="fas fa-cog"></i>
+                    </a>
+                </div>
                 {% endif %}
             </div>
 
-            <!-- Botão Menu Mobile (Corrigido com a classe mobile-menu-btn) -->
-            <button class="mobile-menu-btn md:hidden text-gray-300 text-2xl focus:outline-none">
-                <i class="fas fa-bars"></i>
-            </button>
+            <!-- Perfil -->
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden lg:block">
+                    <p class="text-sm font-bold text-slate-900">{{ request.session.get('user_name', 'Usuário') }}</p>
+                    <p class="text-xs text-slate-500 capitalize">{{ request.session.get('user_role', 'recepcao') }}</p>
+                </div>
+                <a href="/logout"
+                    class="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
         </div>
     </nav>
+    {% endif %}
 
     <!-- Conteúdo Principal -->
-    <main class="container mx-auto px-4 py-8 min-h-screen">
+    <main class="container mx-auto px-4 py-6 md:py-8 min-h-screen">
+
+        <!-- Header Mobile (Só aparece no celular se LOGADO) -->
+        {% if request.session.get('is_logged') %}
+        <div
+            class="md:hidden flex justify-between items-center mb-6 sticky top-0 z-30 bg-slate-50/95 backdrop-blur py-2">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
+                    <i class="fas fa-cut text-white text-sm"></i>
+                </div>
+                <span class="font-bold text-slate-800">Barbearia</span>
+            </div>
+            <a href="/logout"
+                class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 flex items-center justify-center">
+                <i class="fas fa-sign-out-alt text-xs"></i>
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Alertas -->
         {% if request.query_params.get('erro') %}
         <div
-            class="mb-6 p-4 rounded-lg shadow-sm border-l-4 bg-red-50 border-red-500 text-red-800 flex items-center justify-between">
-            <span class="font-medium"><i class="fas fa-exclamation-circle mr-2"></i> {{ request.query_params.get('erro')
-                }}</span>
-            <button onclick="this.parentElement.remove()" class="text-red-600 hover:text-red-800"><i
-                    class="fas fa-times"></i></button>
+            class="mb-6 p-4 rounded-2xl bg-red-50 border border-red-100 text-red-700 flex items-center gap-3 shadow-sm animate-pulse">
+            <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <span class="font-medium text-sm">{{ request.query_params.get('erro') }}</span>
+        </div>
+        {% endif %}
+        {% if request.query_params.get('msg') %}
+        <div
+            class="mb-6 p-4 rounded-2xl bg-green-50 border border-green-100 text-green-700 flex items-center gap-3 shadow-sm">
+            <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <span class="font-medium text-sm">{{ request.query_params.get('msg') }}</span>
         </div>
         {% endif %}
 
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-8 mt-12 border-t border-gray-800">
-        <div class="container mx-auto px-4 text-center">
-            <div class="flex justify-center items-center gap-2 mb-4">
-                <i class="fas fa-cut text-gray-600"></i>
-                <span class="font-semibold text-gray-300">Gestão de Barbearia</span>
-            </div>
-            <p class="text-sm">&copy; 2026 Todos os direitos reservados.</p>
-            <p class="text-xs mt-2 text-gray-600">Powered by FastAPI & Python</p>
-        </div>
-    </footer>
-
     <!-- ========================================== -->
-    <!-- ESTRUTURA DO MENU MOBILE (GAVETA) -->
+    <!-- MENU INFERIOR MOBILE (Só aparece se LOGADO) -->
     <!-- ========================================== -->
-    <div
-        class="mobile-menu-overlay fixed inset-0 bg-black/50 z-[9999] opacity-0 transition-opacity duration-300 pointer-events-none">
-        <div
-            class="mobile-menu-content fixed top-0 right-0 h-full w-[85%] max-w-sm bg-gray-900 shadow-2xl transform translate-x-full transition-transform duration-300 ease-out overflow-y-auto">
+    {% if request.session.get('is_logged') %}
+    <div class="md:hidden fixed bottom-0 left-0 right-0 mobile-bottom-nav z-50 pb-safe">
+        <div class="flex justify-around items-center h-16 px-1">
+            <a href="/agendamentos"
+                class="nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-blue-600 transition duration-300 {% if request.url.path == '/agendamentos' %}active{% endif %}">
+                <i class="fas fa-calendar-alt text-xl mb-1 transition-transform"></i>
+                <span class="text-[9px] font-medium">Agenda</span>
+            </a>
 
-            <!-- Cabeçalho do Menu -->
-            <div class="bg-gradient-to-r from-blue-700 to-blue-900 p-6 pb-8 relative">
-                <button class="mobile-menu-close absolute top-4 right-4 text-white/70 hover:text-white transition">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                        <i class="fas fa-user-tie text-white text-xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-white font-bold text-lg">{{ request.session.get('user_name', 'Usuário') }}</h3>
-                        <p class="text-blue-200 text-xs uppercase tracking-wider font-semibold">
-                            {{ request.session.get('user_role', 'recepcao')|upper }}
-                        </p>
-                    </div>
+            <a href="/marcar-horario"
+                class="nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-blue-600 transition duration-300 {% if request.url.path == '/marcar-horario' %}active{% endif %}">
+                <div
+                    class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-600/40 -mt-6 border-4 border-slate-50">
+                    <i class="fas fa-plus text-xl"></i>
                 </div>
-            </div>
+            </a>
 
-            <!-- Itens do Menu -->
-            <div class="py-4 px-3 space-y-1">
+            <a href="/cadastrar-cliente"
+                class="nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-blue-600 transition duration-300 {% if request.url.path == '/cadastrar-cliente' %}active{% endif %}">
+                <i class="fas fa-users text-xl mb-1 transition-transform"></i>
+                <span class="text-[9px] font-medium">Clientes</span>
+            </a>
 
-                <!-- Seção: Principal -->
-                <div class="mb-6">
-                    <p class="px-3 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Principal</p>
-                    <a href="/agendamentos"
-                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
-                        <i class="fas fa-calendar-alt w-5 text-center text-blue-400 group-hover:text-blue-300"></i>
-                        <span class="font-medium">Agenda</span>
-                    </a>
-                    <a href="/marcar-horario"
-                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
-                        <i class="fas fa-plus-circle w-5 text-center text-green-400 group-hover:text-green-300"></i>
-                        <span class="font-medium">Novo Agendamento</span>
-                    </a>
-                    <a href="/cadastrar-cliente"
-                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
-                        <i class="fas fa-users w-5 text-center text-purple-400 group-hover:text-purple-300"></i>
-                        <span class="font-medium">Clientes</span>
-                    </a>
-                </div>
+            {% if request.session.get('user_role') == 'admin' %}
+            <!-- Botão Gestão (Leva a uma página de seleção ou abre modal) -->
+            <a href="/admin/gestao-completa"
+                class="nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-purple-600 transition duration-300 {% if request.url.path == '/admin/gestao-completa' %}active{% endif %}">
+                <i class="fas fa-briefcase text-xl mb-1 transition-transform"></i>
+                <span class="text-[9px] font-medium">Gestão</span>
+            </a>
 
-                <!-- Seção: Gestão (Só para Admin) -->
-                {% if request.session.get('user_role') == 'admin' %}
-                <div class="mb-6">
-                    <p class="px-3 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Gestão</p>
-                    <a href="/estatisticas"
-                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
-                        <i class="fas fa-chart-line w-5 text-center text-yellow-400 group-hover:text-yellow-300"></i>
-                        <span class="font-medium">Relatórios</span>
-                    </a>
-                    <a href="/servicos"
-                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
-                        <i class="fas fa-cut w-5 text-center text-pink-400 group-hover:text-pink-300"></i>
-                        <span class="font-medium">Serviços</span>
-                    </a>
-                    <a href="/produtos"
-                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
-                        <i class="fas fa-box w-5 text-center text-orange-400 group-hover:text-orange-300"></i>
-                        <span class="font-medium">Produtos</span>
-                    </a>
-                    <a href="/cadastrar-barbeiro"
-                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
-                        <i class="fas fa-user-tie w-5 text-center text-cyan-400 group-hover:text-cyan-300"></i>
-                        <span class="font-medium">Barbeiros</span>
-                    </a>
-                    <a href="/admin/configuracoes"
-                        class="flex items-center gap-3 px-3 py-3.5 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition group">
-                        <i class="fas fa-cog w-5 text-center text-gray-400 group-hover:text-gray-300"></i>
-                        <span class="font-medium">Configurações</span>
-                    </a>
-                </div>
-                {% endif %}
-
-                <!-- Seção: Conta -->
-                <div class="border-t border-gray-800 pt-4 mt-4">
-                    <a href="/logout"
-                        class="flex items-center gap-3 px-3 py-3.5 text-red-400 hover:bg-red-900/20 hover:text-red-300 rounded-lg transition group">
-                        <i class="fas fa-sign-out-alt w-5 text-center"></i>
-                        <span class="font-medium">Sair do Sistema</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Rodapé -->
-            <div class="p-4 text-center text-xs text-gray-600 border-t border-gray-800">
-                <p>Sistema Profissional v1.0</p>
-            </div>
+            <a href="/estatisticas"
+                class="nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-blue-600 transition duration-300 {% if request.url.path == '/estatisticas' %}active{% endif %}">
+                <i class="fas fa-chart-pie text-xl mb-1 transition-transform"></i>
+                <span class="text-[9px] font-medium">Dados</span>
+            </a>
+            {% else %}
+            <!-- Espaçador para Recepção -->
+            <div class="w-full"></div>
+            <div class="w-full"></div>
+            {% endif %}
         </div>
     </div>
+    {% endif %}
 
-    <!-- Script para o Menu Mobile -->
     <script>
-        const menuBtn = document.querySelector('.mobile-menu-btn');
-        const menuOverlay = document.querySelector('.mobile-menu-overlay');
-        const menuContent = document.querySelector('.mobile-menu-content');
-        const closeBtn = document.querySelector('.mobile-menu-close');
-
-        function toggleMenu() {
-            const isOpen = menuOverlay.classList.contains('show');
-
-            if (isOpen) {
-                // Fechar menu
-                menuOverlay.classList.remove('show');
-                menuContent.classList.remove('slide-in');
-                menuContent.classList.add('slide-out');
-                setTimeout(() => {
-                    menuOverlay.classList.remove('visible');
-                    menuContent.classList.remove('slide-out');
-                    document.body.style.overflow = 'auto'; // Volta scroll da página
-                }, 300);
-            } else {
-                // Abrir menu
-                menuOverlay.classList.add('visible');
-                setTimeout(() => {
-                    menuOverlay.classList.add('show');
-                    menuContent.classList.add('slide-in');
-                    document.body.style.overflow = 'hidden'; // Trava scroll da página
-                }, 10);
-            }
-        }
-
-        if (menuBtn) menuBtn.addEventListener('click', toggleMenu);
-        if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
-        if (menuOverlay) menuOverlay.addEventListener('click', (e) => {
-            if (e.target === menuOverlay) toggleMenu();
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function () {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
         });
     </script>
-
 </body>
 
 </html>
